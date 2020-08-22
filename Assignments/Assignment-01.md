@@ -1,5 +1,9 @@
-# TITLE
+# AUTOMATE IT WITH RISKALYZE!
+<<<<<<< HEAD
 **AUTOMATE IT WITH RISKALYZE!**
+=======
+AUTOMATE IT WITH RISKALYZE!
+>>>>>>> 1fc02d27cb410654f73a5b5040fa1b6b7565353b
 ## Overview and Origin
 Helps investors to assess the portfolio risk with an innovative RiskNumber® approach. Based on specific metrics that are incorporated into the algorithm the platform can create risk reports and make recommendations as well as sharing personalized insights about portfolio.
 Mixture of Wealth & Asset Management and Robo-Advising Domains. 
