@@ -1,15 +1,11 @@
 # AUTOMATE IT WITH RISKALYZE!
-<<<<<<< HEAD
-**AUTOMATE IT WITH RISKALYZE!**
-=======
-AUTOMATE IT WITH RISKALYZE!
->>>>>>> 1fc02d27cb410654f73a5b5040fa1b6b7565353b
+* 
 ## Overview and Origin
 Helps investors to assess the portfolio risk with an innovative RiskNumber® approach. Based on specific metrics that are incorporated into the algorithm the platform can create risk reports and make recommendations as well as sharing personalized insights about portfolio.
 Mixture of Wealth & Asset Management and Robo-Advising Domains. 
 A risk profiling software and/or risk analysis tool. 
 
-* Name of company:
+* **Name of company:**
 RISKALYZE
 
 * When was the company incorporated?:
@@ -27,10 +23,10 @@ According to Crunchbase, Riskalyze has acquired funding of $23.5M over 6 rounds 
 * What specific financial problem is the company or project trying to solve?
 The specific problem that Riskalyze® aims to solve is the process of assessing the risk of an investment portfolio in an automated and personalized way. The broad customer base for Riskalyze is financial advisors as the work that the company does is very similar to what an advisor does and the service is free of charge for financial advisors. In addition to financial advisors, Riskalyze also targets the people who manage their own portfolios but charge them an asset-based fee for using the service. Differently from a financial advisor who does the work with his/her knowledge and expertise, Riskalyze automates this whole process and assigns a RiskNumber® to portfolios. This RiskNumber® is a value between 0 and 100 that gives insight about the Value-At-Risk of the portfolio. The less risky a portfolio is the closer the RiskNumber® to 0 and vice versa. With this innovative technology that the company developed, any individual around the globe can get an insight about their portfolio without the need of hiring a financial advisor.
 
-* Who is the company's intended customer?  Is there any information about the market size of this set of customers?
+* **Who is the company's intended customer?  Is there any information about the market size of this set of customers?**
 Company’s targeted customers are financial advisors and portfolio managers. In my opinion, targeting financial advisors and offering the product free of charge to that specific customer base is a part of management strategy both for getting feedback from professional advisors about the product, and making the product widely known and available in the field. However, the other customer base; portfolio managers constitute of the main cash-generating customer base for Riskalyze. Since these portfolio managers can be any individual around the globe without a pre-determined level of expertise or amount of cash, there is a huge potential ahead. Also, instead of calculating the total available market based on number of users we need to make this calculation through total assets as the pricing is based on a 10-15 basis points of total assets in portfolio.
 
-What solution does this company offer that their competitors do not or cannot offer? (What is the unfair advantage they utilize?)
+* What solution does this company offer that their competitors do not or cannot offer? (What is the unfair advantage they utilize?)
 According to Kitces, Riskalyze is not only a wealth-tech vendor but also acts as an ETF manufacturer and has a high potential of growth into more fields such as building models and trading engines. In my view, the biggest competitors for Riskalyze are financial advisors because the work they are doing is transforming the old traditional market of human-advisors. What Riskalyze does differently from traditional human advisors is that they provide a faster, cheaper, and an innovative approach for risk assessment. Potentially in the future, they have the potential to bundle other offerings into the service they provide such as trading engines, building financial models, and portfolio building etc.
 
 * Which technologies are they currently using, and how are they implementing them? (This may take a little bit of sleuthing–– you may want to search the company’s engineering blog or use sites like Stackshare to find this information.)
