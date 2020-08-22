@@ -103,4 +103,8 @@ Automatic trading systems will need to be linked directly to a brokerage account
 
 I believe this technology would make the platform a more complete solution. A person getting financial advice probably wants that information so he/she can make more informed investment decisions that maximizes profit. If the platform allows their users to automate investments based on their risk appetite from the same survey results.
 
+https://www.riskalyze.com
+
+
+
 ###### Eren Turkmenoglu
