@@ -1,7 +1,7 @@
 This is a README.md file.
 Here I list my homeworks for UW-FinTech BootCamp.
 
-Assignment-01 : FinTech Company Analysis and Report (Riskalyze) \n
+Assignment-01 : FinTech Company Analysis and Report (Riskalyze)  <br />
 Assignment-02 : Basic Python activities \n
 Assignment-04 : Pandas library \n
 Assignment-05 : API Configuration \n
