@@ -1,4 +1,3 @@
-This is a README.md file. <br />
 Here I list my homeworks for UW-FinTech BootCamp.
 
 Assignment-01 : FinTech Company Analysis and Report (Riskalyze)  <br />
