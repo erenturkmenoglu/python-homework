@@ -7,5 +7,5 @@ Assignment-05 : API Configuration  <br />
 Assignment-10 : Time-Series Model  <br />
 Assignment-11 : Machine Learning  <br />
 Assignment-12 : NLP  <br />
-Assignment-13 : AWS-Lex  <br />
+Assignment-13 : Crypto_clustering  <br />
 Assignment-14 : Deep Learning
