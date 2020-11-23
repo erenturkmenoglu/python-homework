@@ -23,9 +23,12 @@ You will need to:
 2. Build and train a custom LSTM RNN
 3. Evaluate the performance of the model
 
+<br />
+<br />
+<br />
+# ________________________________________________________________________________________
 
-
-1. Which model has a lower loss? <br />
+## Which model has a lower loss? <br />
 *lstm_predictor_closing_ET.ipynb:* <br />
 Epoch 10/10 <br />
 371/371 [==============================] - 4s 11ms/step - *loss: 0.0132*
@@ -36,7 +39,8 @@ Epoch 10/10 <br />
 
 As you can see above from the evaluation of the two models, the loss is lower in the 1st model with closing prices.
 
-2. Which model tracks the actual values better over time? <br />
+## Which model tracks the actual values better over time? <br />
+<br />
 *lstm_predictor_closing_ET.ipynb:* <br />
 ![Predictor_closing_prices](closing_deep_learning_14.png)
 *lstm_predictor_fng_ET.ipynb:* <br />
