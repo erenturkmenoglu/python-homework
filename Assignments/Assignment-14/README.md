@@ -25,7 +25,7 @@ You will need to:
 
 
 
-1. Which model has a lower loss?
+1. Which model has a lower loss? <br />
 *lstm_predictor_closing_ET.ipynb:* <br />
 Epoch 10/10 <br />
 371/371 [==============================] - 4s 11ms/step - *loss: 0.0132*
