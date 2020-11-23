@@ -42,8 +42,11 @@ As you can see above from the evaluation of the two models, the loss is lower in
 ## Which model tracks the actual values better over time? <br />
 <br />
 *lstm_predictor_closing_ET.ipynb:* <br />
+
 ![Predictor_closing_prices](closing_deep_learning_14.png)
+
 *lstm_predictor_fng_ET.ipynb:* <br />
+
 ![Predictor_fear_and_greed_index](fng_deep_learning_14.png)
 
 Model with closing prices predicted better results.
