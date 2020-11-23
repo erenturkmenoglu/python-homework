@@ -26,7 +26,7 @@ You will need to:
 <br />
 <br />
 <br />
-# ________________________________________________________________________________________
+
 
 ## Which model has a lower loss? <br />
 *lstm_predictor_closing_ET.ipynb:* <br />
