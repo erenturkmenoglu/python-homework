@@ -1,453 +1,191 @@
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "# BLOCKCHAIN WALLET\n",
-    "## Assignment - 19 (Blockchain)\n",
-    "\n",
-    "#### Background\n",
-    "Your new startup is focusing on building a portfolio management system that supports not only traditional assets\n",
-    "like gold, silver, stocks, etc, but crypto-assets as well! The problem is, there are so many coins out there! It's\n",
-    "a good thing you understand how HD wallets work, since you'll need to build out a system that can create them.\n",
-    "\n",
-    "You're in a race to get to the market. There aren't as many tools available in Python for this sort of thing, yet.\n",
-    "Thankfully, you've found a command line tool, hd-wallet-derive that supports not only BIP32, BIP39, and BIP44, but\n",
-    "also supports non-standard derivation paths for the most popular wallets out there today! However, you need to integrate\n",
-    "the script into your backend with your dear old friend, Python.\n",
-    "\n",
-    "Once you've integrated this \"universal\" wallet, you can begin to manage billions of addresses across 300+ coins, giving\n",
-    "you a serious edge against the competition. In this assignment, however, you will only need to get 2 coins working: Ethereum and Bitcoin Testnet. Ethereum keys are the same format on any network, so the Ethereum keys should work with your custom networks or testnets."
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "#### Importing Libraries/Dependencies\n",
-    " * PHP must be installed on your operating system (any version, 5 or 7). Don't worry, you will not need to know any PHP.\n",
-    " * You will need to clone the hd-wallet-drive tool to the same directory you're working.\n",
-    " * web3.py Python Ethereum library.\n",
-    " * bit Python Bitcoin library."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 1,
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "True"
-      ]
-     },
-     "execution_count": 1,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "from constants import *\n",
-    "import os\n",
-    "import subprocess # a Python library allowing us to interact with the command line\n",
-    "import json\n",
-    "\n",
-    "from web3 import Web3 # Python Ethereum library\n",
-    "from web3.middleware import geth_poa_middleware\n",
-    "from eth_account import Account\n",
-    "from web3.gas_strategies.time_based import medium_gas_price_strategy\n",
-    "\n",
-    "from bit import PrivateKeyTestnet\n",
-    "from bit.network import NetworkAPI\n",
-    "\n",
-    "from dotenv import load_dotenv\n",
-    "load_dotenv()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "#### Import Mnemonic from .env file\n",
-    "The environment file must be in the same directory with current notebook. <br/>\n",
-    "This is an optional step for not covering our mnemonic phrase in the script."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 2,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "mnemonic = os.getenv('MNEMONIC_KEY')\n",
-    "#print(f'Mnemonic Phrase: {mnemonic}')"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 3,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Connecting to a local ETH network\n",
-    "w3 = Web3(Web3.HTTPProvider(\"http://127.0.0.1:8545\"))\n",
-    "w3.middleware_onion.inject(geth_poa_middleware, layer=0)\n",
-    "w3.eth.setGasPriceStrategy(medium_gas_price_strategy)"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "#### Derive wallet\n",
-    "By defining this function we can easily change the Testnet wallet coin"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 4,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def derive_wallets(mnemonic, coin, numderive):\n",
-    "    command = f'./derive -g --mnemonic=\"{mnemonic}\" --cols=index,address,pubkey,privkey --coin=\"{coin}\" --numderive=\"{numderive}\" --format=json' \n",
-    "    \n",
-    "    p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)\n",
-    "    (output, err) = p.communicate()\n",
-    "   \n",
-    "    keys = json.loads(output)\n",
-    "    return  keys"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 5,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Setting a dictionary of coins to easily pull the keys\n",
-    "coins = {\"eth\", \"btc-test\", \"btc\"}\n",
-    "\n",
-    "# Creating a for loop to pull keys for different coins\n",
-    "keys = {}\n",
-    "for coin in coins:\n",
-    "    keys[coin]= derive_wallets(mnemonic, coin, numderive=2)\n",
-    "    \n",
-    "# Assigning private key and address pairs to respective variables\n",
-    "eth_private = keys['eth'][0]['privkey']\n",
-    "eth_address = keys['eth'][0]['address']\n",
-    "\n",
-    "btctest_private = keys['btc-test'][0]['privkey']\n",
-    "btctest_address = keys['btc-test'][0]['address']\n",
-    "\n",
-    "btc_private = keys['btc'][0]['privkey']\n",
-    "btc_address = keys['btc'][0]['address']"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 6,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Creating a function that converts the private key string in a child key to an account object\n",
-    "def priv_key_to_account(coin,priv_key):\n",
-    "    print(coin)\n",
-    "    print(priv_key)\n",
-    "    if coin == ETH:\n",
-    "        return Account.privateKeyToAccount(priv_key)\n",
-    "    elif coin == BTCTEST:\n",
-    "        return PrivateKeyTestnet(priv_key)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 7,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "eth\n",
-      "0x9b88b699e0c7dd2061d21f4c88bd68ac88333a19c2b00b88c4b820ceb9ee3647\n",
-      "btc-test\n",
-      "cRQTHpLyJmU6geRrGTL1deoi72XreHJp6BS6nEygT8d4g89mvpHt\n",
-      "btc\n",
-      "L2kktFkqo62wW85fDgsaX8DkxFSu9hCUa9EHnEuekUZSQHNj2sMs\n"
-     ]
-    }
-   ],
-   "source": [
-    "# Assigning account objects\n",
-    "account_one_eth = priv_key_to_account('eth', eth_private)\n",
-    "account_one_btctest = priv_key_to_account('btc-test', btctest_private)\n",
-    "account_one_btc = priv_key_to_account('btc', btc_private)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 8,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# This will create the raw, unsigned transaction that contains all metadata needed to transact.\n",
-    "\n",
-    "def create_tx(coin, account, recipient, amount):\n",
-    "    if coin == ETH: \n",
-    "        gasEstimate = w3.eth.estimateGas(\n",
-    "            {\n",
-    "             \"from\":account_one_eth.address, \n",
-    "             \"to\":recipient, \n",
-    "             \"value\": amount\n",
-    "            }\n",
-    "                                        )\n",
-    "        \n",
-    "        return {\"from\": account_one_eth.address,\n",
-    "                \"to\": recipient,\n",
-    "                \"value\": amount,\n",
-    "                \"gasPrice\": w3.eth.gasPrice,\n",
-    "                \"gas\": gasEstimate,\n",
-    "                \"nonce\": w3.eth.getTransactionCount(account_one_eth.address)\n",
-    "                }\n",
-    "    \n",
-    "    elif coin == BTCTEST:\n",
-    "        \n",
-    "        return PrivateKeyTestnet.prepare_transaction(account_one_btctest.address, [(recipient, amount, BTC)])"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 9,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# This will call 'create_tx', sign the transaction, then send it to the designated network.\n",
-    "\n",
-    "def send_txn(coin, account, recipient, amount):\n",
-    "    txn = create_tx(coin, account, recipient, amount)\n",
-    "    \n",
-    "    if coin == ETH:\n",
-    "        signed_txn = account_one_eth.sign_transaction(txn)\n",
-    "        result = w3.eth.sendRawTransaction(signed_txn.rawTransaction)\n",
-    "        #print(result.hex())\n",
-    "        return result.hex()\n",
-    "    \n",
-    "    elif coin == BTCTEST:\n",
-    "        tx_btctest = create_tx(coin, account, recipient, amount)\n",
-    "        signed_txn = account_one_btctest.sign_transaction(txn)\n",
-    "        print(signed_txn)\n",
-    "        return NetworkAPI.broadcast_tx_testnet(signed_txn)"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "#### Now it's the time to confirm the transactions with the process below.\n",
-    " * Get the balance for the target address\n",
-    " * Create a transaction\n",
-    " * Send the transaction\n",
-    " * Get the balance for the target address again to see the change."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 10,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Assigning a target_address variable for ease of use\n",
-    "target_address_eth = keys['eth'][1]['address']"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "This is our target address and its balance before transaction.\n",
-    "![Target Address](target_address.png)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 11,
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "108000003814697276545"
-      ]
-     },
-     "execution_count": 11,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "# Getting the balance for the target ETH address\n",
-    "balance_t0 = w3.eth.getBalance(target_address_eth)# / 10**18\n",
-    "balance_t0"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 12,
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "{'from': '0xcCcEE0Ec358cefb0bb1Eb750eAAAF2e4AB14138B',\n",
-       " 'to': '0x7a5D4602c338B4601996a3Fc9136356474128c81',\n",
-       " 'value': 1000000000000000000,\n",
-       " 'gasPrice': 20000000000,\n",
-       " 'gas': 21000,\n",
-       " 'nonce': 61}"
-      ]
-     },
-     "execution_count": 12,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "# Creating a raw transaction\n",
-    "create_tx(ETH, account_one_eth, target_address_eth, 10**18)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 13,
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "'0x1cc839a25225d3f128140cabc6c1af970b14e9883c92b79f7ad5809756685af3'"
-      ]
-     },
-     "execution_count": 13,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "# Signing the transaction\n",
-    "send_txn(ETH, account_one_eth, target_address_eth, 10**18)"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "As you can see in this image, TX HASH and the cryptographic code that we get after executing send_txn function are the same!\n",
-    "![Transaction Hash](signed_transaction.png)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 14,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Getting the balance to compare the ending balance\n",
-    "balance_t1 = w3.eth.getBalance(target_address_eth)# / 10**18"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "This is our target address and its balance after transaction. The balance changed by 1 ether after signing the transaction.\n",
-    "![Transaction Hash](target_address_after.png)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 15,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "The balance of the target address has changed by; \n",
-      "\n",
-      "1000000000000000000 wei or \n",
-      "1000000000.0 gwei or \n",
-      "1.0 ether\n"
-     ]
-    }
-   ],
-   "source": [
-    "# Comparing the balances before and after the transaction\n",
-    "change = balance_t1 - balance_t0\n",
-    "print(f'The balance of the target address has changed by; \\n\\n{change} wei or \\n{change/10**9} gwei or \\n{change/10**18} ether')"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 16,
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "AttributeDict({'transactionHash': HexBytes('0x4866c5f9d2bcf1e6044a4c8bc231043c1d7fce8b3c14f88c1f4064cbe482864a'),\n",
-       " 'transactionIndex': 0,\n",
-       " 'blockHash': HexBytes('0x1460128ba836be49de031e48bae7e94fba2917aa255bf096241d33076b41d6f8'),\n",
-       " 'blockNumber': 57,\n",
-       " 'from': '0xcCcEE0Ec358cefb0bb1Eb750eAAAF2e4AB14138B',\n",
-       " 'to': '0x7a5D4602c338B4601996a3Fc9136356474128c81',\n",
-       " 'gasUsed': 21000,\n",
-       " 'cumulativeGasUsed': 21000,\n",
-       " 'contractAddress': None,\n",
-       " 'logs': [],\n",
-       " 'status': 1,\n",
-       " 'logsBloom': HexBytes('0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000')})"
-      ]
-     },
-     "execution_count": 16,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "# When we copy the transaction hash and paste it here into this command we get the transaction receipt \n",
-    "w3.eth.getTransactionReceipt('0x4866c5f9d2bcf1e6044a4c8bc231043c1d7fce8b3c14f88c1f4064cbe482864a')"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.8.2"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 4
-}
+# BLOCKCHAIN WALLET
+## Assignment - 19 (Blockchain)
+
+#### Background
+Your new startup is focusing on building a portfolio management system that supports not only traditional assets
+like gold, silver, stocks, etc, but crypto-assets as well! The problem is, there are so many coins out there! It's
+a good thing you understand how HD wallets work, since you'll need to build out a system that can create them.
+
+You're in a race to get to the market. There aren't as many tools available in Python for this sort of thing, yet.
+Thankfully, you've found a command line tool, hd-wallet-derive that supports not only BIP32, BIP39, and BIP44, but
+also supports non-standard derivation paths for the most popular wallets out there today! However, you need to integrate
+the script into your backend with your dear old friend, Python.
+
+Once you've integrated this "universal" wallet, you can begin to manage billions of addresses across 300+ coins, giving
+you a serious edge against the competition. In this assignment, however, you will only need to get 2 coins working: Ethereum and Bitcoin Testnet. Ethereum keys are the same format on any network, so the Ethereum keys should work with your custom networks or testnets.
+
+#### Importing Libraries/Dependencies
+ * PHP must be installed on your operating system (any version, 5 or 7). Don't worry, you will not need to know any PHP.
+ * You will need to clone the hd-wallet-drive tool to the same directory you're working.
+ * web3.py Python Ethereum library.
+ * bit Python Bitcoin library.
+ 
+ ```
+ from constants import *
+import os
+import subprocess # a Python library allowing us to interact with the command line
+import json
+
+from web3 import Web3 # Python Ethereum library
+from web3.middleware import geth_poa_middleware
+from eth_account import Account
+from web3.gas_strategies.time_based import medium_gas_price_strategy
+
+from bit import PrivateKeyTestnet
+from bit.network import NetworkAPI
+
+from dotenv import load_dotenv
+load_dotenv()
+ ```
+ 
+#### Import Mnemonic from .env file
+The environment file must be in the same directory with current notebook. <br/>
+This is an optional step for not covering our mnemonic phrase in the script.
+
+```
+mnemonic = os.getenv('MNEMONIC_KEY')
+#print(f'Mnemonic Phrase: {mnemonic}')
+
+# Connecting to a local ETH network
+w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
+w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+w3.eth.setGasPriceStrategy(medium_gas_price_strategy)
+```
+
+#### Derive wallet
+By defining this function we can easily change the Testnet wallet coin
+
+```
+def derive_wallets(mnemonic, coin, numderive):
+    command = f'./derive -g --mnemonic="{mnemonic}" --cols=index,address,pubkey,privkey --coin="{coin}" --numderive="{numderive}" --format=json' 
+    
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    (output, err) = p.communicate()
+   
+    keys = json.loads(output)
+    return  keys
+    
+# Setting a dictionary of coins to easily pull the keys
+coins = {"eth", "btc-test", "btc"}
+
+# Creating a for loop to pull keys for different coins
+keys = {}
+for coin in coins:
+    keys[coin]= derive_wallets(mnemonic, coin, numderive=2)
+    
+# Assigning private key and address pairs to respective variables
+eth_private = keys['eth'][0]['privkey']
+eth_address = keys['eth'][0]['address']
+
+btctest_private = keys['btc-test'][0]['privkey']
+btctest_address = keys['btc-test'][0]['address']
+
+btc_private = keys['btc'][0]['privkey']
+btc_address = keys['btc'][0]['address']
+
+# Creating a function that converts the private key string in a child key to an account object
+def priv_key_to_account(coin,priv_key):
+    print(coin)
+    print(priv_key)
+    if coin == ETH:
+        return Account.privateKeyToAccount(priv_key)
+    elif coin == BTCTEST:
+        return PrivateKeyTestnet(priv_key)
+        
+# Assigning account objects
+account_one_eth = priv_key_to_account('eth', eth_private)
+account_one_btctest = priv_key_to_account('btc-test', btctest_private)
+account_one_btc = priv_key_to_account('btc', btc_private)
+
+
+# This will create the raw, unsigned transaction that contains all metadata needed to transact.
+
+def create_tx(coin, account, recipient, amount):
+    if coin == ETH: 
+        gasEstimate = w3.eth.estimateGas(
+            {
+             "from":account_one_eth.address, 
+             "to":recipient, 
+             "value": amount
+            }
+                                        )
+        
+        return {"from": account_one_eth.address,
+                "to": recipient,
+                "value": amount,
+                "gasPrice": w3.eth.gasPrice,
+                "gas": gasEstimate,
+                "nonce": w3.eth.getTransactionCount(account_one_eth.address)
+                }
+    
+    elif coin == BTCTEST:
+        
+        return PrivateKeyTestnet.prepare_transaction(account_one_btctest.address, [(recipient, amount, BTC)])
+        
+        
+        
+# This will call 'create_tx', sign the transaction, then send it to the designated network.
+
+def send_txn(coin, account, recipient, amount):
+    txn = create_tx(coin, account, recipient, amount)
+    
+    if coin == ETH:
+        signed_txn = account_one_eth.sign_transaction(txn)
+        result = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
+        #print(result.hex())
+        return result.hex()
+    
+    elif coin == BTCTEST:
+        tx_btctest = create_tx(coin, account, recipient, amount)
+        signed_txn = account_one_btctest.sign_transaction(txn)
+        print(signed_txn)
+        return NetworkAPI.broadcast_tx_testnet(signed_txn)
+```
+#### Now it's the time to confirm the transactions with the process below.
+ * Get the balance for the target address
+ * Create a transaction
+ * Send the transaction
+ * Get the balance for the target address again to see the change.
+ 
+```
+ # Assigning a target_address variable for ease of use
+target_address_eth = keys['eth'][1]['address']
+```
+
+This is our target address and its balance before transaction.
+![Target Address](target_address.png)
+
+```
+# Getting the balance for the target ETH address
+balance_t0 = w3.eth.getBalance(target_address_eth)# / 10**18
+balance_t0
+```
+
+```
+# Creating a raw transaction
+create_tx(ETH, account_one_eth, target_address_eth, 10**18)
+```
+
+```
+# Signing the transaction
+send_txn(ETH, account_one_eth, target_address_eth, 10**18)
+```
+
+As you can see in this image, TX HASH and the cryptographic code that we get after executing send_txn function are the same!
+![Transaction Hash](signed_transaction.png)
+```
+# Getting the balance to compare the ending balance
+balance_t1 = w3.eth.getBalance(target_address_eth)# / 10**18
+```
+This is our target address and its balance after transaction. The balance changed by 1 ether after signing the transaction.
+![Transaction Hash](target_address_after.png)
+
+```
+# Comparing the balances before and after the transaction
+change = balance_t1 - balance_t0
+print(f'The balance of the target address has changed by; \n\n{change} wei or \n{change/10**9} gwei or \n{change/10**18} ether')
+```
+```
+# When we copy the transaction hash and paste it here into this command we get the transaction receipt 
+w3.eth.getTransactionReceipt('INSERT TX HASH HERE')
+```
